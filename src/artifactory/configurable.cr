@@ -15,13 +15,26 @@ module Artifactory
       :read_timeout   => Int32,
     }
 
+    def self.keys
+      KEYS
+    end
+
     {% begin %}
       {% for key, ktype in Artifactory::Configurable::KEYS %}
         property {{key.id}} : {{ktype}}? = nil
       {% end %}
+
+      alias Options=Hash(Symbol, Union({{*Artifactory::Configurable::KEYS.values}}, Nil))
     {% end %}
 
     macro included
+
+      def initializ(options : Artifactory::Configurable::Options? = nil)
+        {% for key, ktype in Artifactory::Configurable::KEYS %}
+        self.{{key.id}} = options[{{key}}]? || Artifactory::Defaults.{{key.id}}
+        {% end %}
+      end
+
       def initialize(
         {% for key, ktype in Artifactory::Configurable::KEYS %}
           @{{key.id}} : {{ktype}}? = nil,
@@ -29,6 +42,16 @@ module Artifactory
       )
         {% for key, ktype in Artifactory::Configurable::KEYS %}
         self.{{key.id}} = Artifactory::Defaults.{{key.id}} if {{key.id}}.nil?
+        {% end %}
+      end
+
+      def options : Options
+        {% begin %}
+        {
+          {% for key in Configurable::KEYS %}
+          {{key}} => {{key.id}},
+          {% end %}
+        }
         {% end %}
       end
     end
@@ -48,10 +71,6 @@ module Artifactory
       {% end %}
       end
     {% end %}
-    end
-
-    def self.keys
-      KEYS
     end
 
     # Set the configuration for this config, using a block.
