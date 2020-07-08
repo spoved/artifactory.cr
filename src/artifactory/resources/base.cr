@@ -22,7 +22,7 @@ module Artifactory
       # @option options [Artifactory::Client] :client
       #   the client object to use for requests
       #
-      def extract_client!(options)
+      def extract_client!(options : Hash(Symbol, _))
         options.delete(:client) || Artifactory.client
       end
 

@@ -40,6 +40,11 @@ module Artifactory
         ENV["ARTIFACTORY_PASSWORD"]?
       end
 
+      # The API Access Token for authentication
+      def access_token : String?
+        ENV["ARTIFACTORY_ACCESS_TOKEN"]?
+      end
+
       # The API Key for authentication
       def api_key : String?
         ENV["ARTIFACTORY_API_KEY"]?
@@ -71,7 +76,7 @@ module Artifactory
       end
 
       # Verify SSL requests (default: true)
-      def ssl_verify : Bool?
+      def ssl_verify : Bool
         if ENV["ARTIFACTORY_SSL_VERIFY"]?.nil?
           true
         else

@@ -27,5 +27,9 @@ describe Artifactory::Client do
       c.username = "admin"
       c.username.should eq("admin")
     end
+
+    it "can ping api endpoint" do
+      client.ping?.should be_true
+    end
   end
 end

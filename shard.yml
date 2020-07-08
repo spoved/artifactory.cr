@@ -7,3 +7,15 @@ authors:
 crystal: 0.35.1
 
 license: MIT
+
+dependencies:
+  spoved:
+    github: spoved/spoved.cr
+development_dependencies:
+  vcr:
+    github: spoved/vcr.cr
+  ameba:
+    github: veelenga/ameba
+    version: ~> 0.10.0
+  dotenv:
+    github: gdotdesign/cr-dotenv
