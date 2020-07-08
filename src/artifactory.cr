@@ -1,6 +1,3 @@
-# TODO: Write documentation for `Artifactory`
-module Artifactory
-  VERSION = "0.1.0"
+module Artifactory; end
 
-  # TODO: Put your code here
-end
+require "./artifactory/*"
