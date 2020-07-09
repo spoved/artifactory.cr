@@ -1,7 +1,10 @@
 require "uri"
+require "json"
 
 module Artifactory
-  class Resource::Base
+  abstract class Resource::Base
+    annotation FieldIgnore; end
+
     module ClassMethods
       # Get the client (connection) object from the given options. If the
       # +:client+ key is preset in the hash, it is assumed to contain the
@@ -22,8 +25,9 @@ module Artifactory
       # @option options [Artifactory::Client] :client
       #   the client object to use for requests
       #
-      def extract_client!(options : Hash(Symbol, _))
-        options.delete(:client) || Artifactory.client
+      def extract_client!(options : Resource::Options = Resource::Options.new) : Artifactory::Client
+        # return Artifactory.client unless options[]
+        (options.delete(:client) || Artifactory.client).as(Client)
       end
 
       # Format the repos list from the given options. This method will modify
@@ -34,8 +38,8 @@ module Artifactory
       # @param [Hash] options
       #   the list of options to extract the repos from
       #
-      def format_repos!(options)
-        return options if options[:repos].nil? || options[:repos].empty?
+      def format_repos!(**options)
+        return options if options[:repos]? || options[:repos].empty?
         options[:repos] = options[:repos].as(Array(String)).compact.join(",")
         options
       end
@@ -51,10 +55,60 @@ module Artifactory
       def url_safe(value) : String
         URI.encode(URI.decode(value.to_s))
       end
+
+      def from_uri(uri : String, client : Artifactory::Client)
+        path = uri.lchop(client.endpoint)
+        resp = client.get_raw(path)
+        self.from_json(resp.body)
+      end
+
+      # Create CGI-escaped string from matrix properties
+      #
+      # @see http://bit.ly/1qeVYQl
+      #
+      def to_matrix_properties(hash) : String
+        properties = hash.map do |k, v|
+          key = url_safe(k.to_s)
+          value = url_safe(v.to_s)
+
+          "#{key}=#{value}"
+        end
+
+        if properties.empty?
+          ""
+        else
+          ";#{properties.join(";")}"
+        end
+      end
     end
 
     extend ClassMethods
 
+    macro inherited
+      include JSON::Serializable
+    end
+
+    macro base_url(path)
+      BASE_URL = {{path}}
+    end
+
+    @[FieldIgnore]
+    @[JSON::Field(ignore: true)]
     property client : Artifactory::Client = Artifactory.client
+
+    private def short_classname
+      @short_classname ||= self.class.name.split("::").last
+    end
+
+    # @see Resource::Base.url_safe
+    def url_safe(value)
+      self.class.url_safe(value)
+    end
+
+    def to_s(io)
+      io << "#<"
+      io << short_classname
+      io << ">"
+    end
   end
 end

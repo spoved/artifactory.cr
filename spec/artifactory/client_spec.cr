@@ -1,9 +1,5 @@
 require "../spec_helper"
 
-def client
-  Artifactory::Client.new
-end
-
 describe Artifactory::Client do
   context "configuration" do
     it "is a configurable object" do
@@ -29,7 +25,9 @@ describe Artifactory::Client do
     end
 
     it "can ping api endpoint" do
-      client.ping?.should be_true
+      if cloud?
+        client.ping?.should be_true
+      end
     end
   end
 end

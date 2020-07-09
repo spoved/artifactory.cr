@@ -3,7 +3,7 @@ require "./version"
 module Artifactory
   module Defaults
     # Default API endpoint
-    ENDPOINT = "http://localhost:8080/artifactory"
+    ENDPOINT = "http://localhost:8080"
 
     # Default User Agent header string
     USER_AGENT = "Artifactory Crystal Shard #{Artifactory::VERSION}"

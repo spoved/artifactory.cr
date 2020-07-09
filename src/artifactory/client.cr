@@ -21,11 +21,13 @@ module Artifactory
         user: username,
         pass: password,
         tls_verify_mode: ssl_verify ? OpenSSL::SSL::VerifyMode::PEER : OpenSSL::SSL::VerifyMode::NONE,
+        ssl_private_key: ssl_pem_file,
+        read_timeout: read_timeout,
       )
 
       headers = {
         "Content-Type" => "application/json",
-        "Accept"       => "application/json",
+        "Accept"       => "*/*",
         "Connection"   => "keep-alive",
         "Keep-Alive"   => "30",
       }
@@ -49,37 +51,10 @@ module Artifactory
       opts == options
     end
 
-    # Construct a URL from the given verb and path. If the request is a GET or
-    # DELETE request, the params are assumed to be query params are are
-    # converted as such using {Client#to_query_string}.
-    #
-    # If the path is relative, it is merged with the {Defaults.endpoint}
-    # attribute. If the path is absolute, it is converted to a URI object and
-    # returned.
-    #
-    # @param [Symbol] verb
-    #   the lowercase HTTP verb (e.g. :+get+)
-    # @param [String] path
-    #   the absolute or relative HTTP path (url) to get
-    # @param [Hash] params
-    #   the list of params to build the URI with (for GET and DELETE requests)
-    #
-    # @return [URI]
-    #
-    def build_uri(verb, path, params)
-      # Add any query string parameters
-      if %i{delete get}.include?(verb)
-        path = [path, to_query_string(params)].compact.join("?")
-      end
-
-      # Parse the URI
-      uri = URI.parse(path)
-
-      # Don't merge absolute URLs
-      uri = URI.parse(File.join(endpoint, path)) unless uri.absolute?
-
-      # Return the URI object
-      uri
-    end
+    delegate get, get_raw,
+      post, post_raw,
+      put, put_raw, put_form, put_file,
+      patch, patch_raw,
+      delete, to: client
   end
 end

@@ -1,19 +1,20 @@
 module Artifactory
   module Configurable
     KEYS = {
-      :endpoint       => String,
-      :username       => String?,
-      :password       => String?,
-      :api_key        => String?,
-      :access_token   => String?,
-      :proxy_address  => String?,
-      :proxy_password => String?,
-      :proxy_port     => Int32?,
-      :proxy_username => String?,
-      :ssl_pem_file   => String?,
-      :ssl_verify     => Bool,
-      :user_agent     => String,
-      :read_timeout   => Int32,
+      :endpoint     => String,
+      :username     => String?,
+      :password     => String?,
+      :api_key      => String?,
+      :access_token => String?,
+      :ssl_verify   => Bool,
+      :ssl_pem_file => String?,
+      :read_timeout => Int32,
+
+      # :proxy_address  => String?,
+      # :proxy_password => String?,
+      # :proxy_port     => Int32?,
+      # :proxy_username => String?,
+      # :user_agent     => String,
     }
 
     def self.keys
