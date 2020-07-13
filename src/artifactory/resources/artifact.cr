@@ -5,13 +5,23 @@ require "digest/md5"
 module Artifactory
   @[JSON::Serializable::Options(emit_nulls: false)]
   class Resource::Artifact < Resource::Base
-    SEARCH_URL = "artifactory/api/search/artifact"
+    SEARCH_URL      = "artifactory/api/search/artifact"
+    PROP_SEARCH_URL = "artifactory/api/search/prop"
 
     module ClassMethods
       def search(name : String, *repos,
                  client : Artifactory::Client? = nil)
         c = client || Artifactory.client
         resp = c.get(SEARCH_URL, {"name" => name, "repos" => repos.join(",")})
+        resp["results"].as_a.map do |artifact|
+          from_uri(artifact["uri"].as_s, client: c)
+        end.compact
+      end
+
+      def search(*repos, client : Artifactory::Client? = nil, **props)
+        c = client || Artifactory.client
+        props_hash = props.to_h.merge({"repos" => repos.join(",")}).transform_keys { |k| k.to_s }
+        resp = c.get(PROP_SEARCH_URL, props_hash)
         resp["results"].as_a.map do |artifact|
           from_uri(artifact["uri"].as_s, client: c)
         end.compact
