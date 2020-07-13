@@ -100,6 +100,8 @@ module Artifactory
     @[JSON::Field(ignore: true)]
     property client : Artifactory::Client = Artifactory.client
 
+    @short_classname : String? = nil
+
     private def short_classname
       @short_classname ||= self.class.name.split("::").last
     end

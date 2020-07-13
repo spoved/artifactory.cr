@@ -50,6 +50,8 @@ module Artifactory
     property local_path : String? = nil
     @[JSON::Field(ignore: true)]
     @relative_path : String? = nil
+    @[JSON::Field(ignore: true)]
+    @properties : Hash(String, JSON::Any)? = nil
 
     def initialize(@repo : String, @path : String, local_path : String)
       if !local_path.nil? && File.exists?(local_path)
@@ -79,7 +81,7 @@ module Artifactory
     # @return [String]
     #
     def relative_path
-      @relative_path ||= uri.split("api/storage", 2).last
+      @relative_path ||= uri.not_nil!.split("api/storage", 2).last
     end
 
     # Delete this artifact from repository, suppressing any +ResourceNotFound+
@@ -182,6 +184,28 @@ module Artifactory
       return nil unless response.success?
 
       {{@type}}.from_json(response.body)
+    end
+
+    # GET /api/storage/libs-release-local/org/acme?properties\[=x[,y]\]
+    # {
+    # "uri": "http://localhost:8081/artifactory/api/storage/libs-release-local/org/acme"
+    # "properties":{
+    #         "p1": ["v1","v2","v3"],
+    #         "p2": ["v4","v5","v6"]
+    #     }
+    # }
+    def properties : Hash(String, JSON::Any)
+      @properties ||= fetch_properties
+    end
+
+    private def fetch_properties
+      endpoint = File.join("artifactory/api/storage", relative_path)
+      response = client.get(endpoint, {"properties" => ""})
+      if response["properties"]?
+        response["properties"].as_h
+      else
+        Hash(String, JSON::Any).new
+      end
     end
   end
 end
