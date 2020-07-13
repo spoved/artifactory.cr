@@ -1,5 +1,6 @@
 require "../../spec_helper"
 require "uuid"
+
 describe Artifactory::Resource::Artifact do
   describe "#search" do
     it "can locate artifact" do
@@ -9,9 +10,13 @@ describe Artifactory::Resource::Artifact do
     end
 
     it "can upload file" do
-      Artifactory::Resource::Artifact.search("test/shards.yml", "test-upload-repo").should be_empty
+      Artifactory::Resource::Artifact.search("test/shards.yml", TEST_REPO_NAME).should be_empty
       uuid = UUID.random
-      resp = Artifactory::Resource::Artifact.new("test-upload-repo", "test/shards.yml", "./shard.yml").upload(version: "1.0", uuid: uuid)
+
+      resp = Artifactory::Resource::Artifact.new(
+        TEST_REPO_NAME, "test/shards.yml", "./shard.yml"
+      ).upload(version: "1.0", uuid: uuid)
+
       resp.should be_a Artifactory::Resource::Artifact
     end
   end
