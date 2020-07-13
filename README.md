@@ -9,7 +9,7 @@ A BETA crystal implementation of [artifactory-client](https://github.com/chef/ar
    ```yaml
    dependencies:
      artifactory:
-       github: kalinon/artifactory.cr
+       github: spoved/artifactory.cr
    ```
 
 2. Run `shards install`
