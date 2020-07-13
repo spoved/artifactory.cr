@@ -56,6 +56,10 @@ module Artifactory
         URI.encode(URI.decode(value.to_s))
       end
 
+      def form_safe(value) : String
+        URI.encode_www_form(URI.decode(value.to_s))
+      end
+
       def from_uri(uri : String, client : Artifactory::Client)
         path = uri.lchop(client.endpoint)
         resp = client.get_raw(path)
@@ -68,8 +72,8 @@ module Artifactory
       #
       def to_matrix_properties(hash) : String
         properties = hash.map do |k, v|
-          key = url_safe(k.to_s)
-          value = url_safe(v.to_s)
+          key = form_safe(k.to_s)
+          value = form_safe(v.to_s)
 
           "#{key}=#{value}"
         end
