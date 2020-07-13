@@ -1,4 +1,4 @@
-# artifactory
+# artifactory [![Build Status](https://travis-ci.com/spoved/artifactory.cr.svg?token=Shp7EsY9qyrwFK1NgezB&branch=master)](https://travis-ci.com/spoved/artifactory.cr)
 
 A BETA crystal implementation of [artifactory-client](https://github.com/chef/artifactory-client)
 
