@@ -176,12 +176,16 @@ module Artifactory
     #   the list of headers to send with the request
     # @param [Hash] properties
     #   a list of matrix properties
-    def upload(repo : String? = nil, remote_path : String? = nil, headers : Hash(String, String) = Hash(String, String).new, **props)
+    def upload(repo : String? = nil, remote_path : String? = nil,
+               headers : Hash(String, String) = Hash(String, String).new,
+               properties : Hash(String, String) = Hash(String, String).new,
+               **props)
       upload_repo = repo || self.repo
       upload_path = remote_path || path
 
       file = File.new(File.expand_path(local_path.not_nil!))
-      matrix = self.class.to_matrix_properties(props.to_h)
+      matrix = self.class.to_matrix_properties(props.to_h.merge(properties))
+
       endpoint = File.join("artifactory", url_safe(upload_repo), upload_path) + matrix
 
       # Include checksums in headers if given.
