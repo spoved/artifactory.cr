@@ -217,5 +217,10 @@ module Artifactory
         Hash(String, JSON::Any).new
       end
     end
+
+    def get_contents
+      endpoint = download_uri.not_nil!.split("artifactory", 2).last
+      client.get_raw(path: "artifactory" + endpoint)
+    end
   end
 end
