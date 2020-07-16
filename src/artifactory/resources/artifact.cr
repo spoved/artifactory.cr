@@ -77,6 +77,10 @@ module Artifactory
       checksums["sha1"]?
     end
 
+    def sha256
+      checksums["sha256"]?
+    end
+
     # The MD5 of this artifact.
     def md5
       checksums["md5"]?
@@ -127,9 +131,9 @@ module Artifactory
     def copy_or_move(action, destination, **options)
       params = Hash(String, String).new.tap do |param|
         param["to"] = destination
-        param["failFast"] = 1 if options[:fail_fast]?
-        param["suppressLayouts"] = 1 if options[:suppress_layouts]?
-        param["dry"] = 1 if options[:dry_run]?
+        param["failFast"] = "1" if options[:fail_fast]?
+        param["suppressLayouts"] = "1" if options[:suppress_layouts]?
+        param["dry"] = "1" if options[:dry_run]?
       end
 
       endpoint = File.join("artifactory/api", action.to_s, relative_path)
