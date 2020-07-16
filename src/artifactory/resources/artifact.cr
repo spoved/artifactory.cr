@@ -138,7 +138,7 @@ module Artifactory
 
       endpoint = File.join("artifactory/api", action.to_s, relative_path)
 
-      client.post(endpoint, params)
+      client.post(endpoint, "", params)
     end
 
     # See #copy_or_move
