@@ -67,6 +67,7 @@ module Artifactory
       if !local_path.nil? && File.exists?(local_path)
         @local_path = local_path
         @size = File.size(local_path).to_s
+        @relative_path = File.join(@repo, @path)
       else
         raise Exception.new "You must include the local path"
       end
