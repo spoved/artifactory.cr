@@ -1,5 +1,5 @@
 name: artifactory
-version: 0.1.1
+version: 0.1.2
 
 authors:
   - Holden Omans <holden.omans@gmail.com>
@@ -11,7 +11,7 @@ license: MIT
 dependencies:
   spoved:
     github: spoved/spoved.cr
-    version: ">= 0.3.4"
+    version: ">= 0.3.5"
 development_dependencies:
   vcr:
     github: spoved/vcr.cr
