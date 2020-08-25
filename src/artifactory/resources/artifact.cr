@@ -209,7 +209,7 @@ module Artifactory
       slice = Bytes.new(256_000)
       while (digest.read(slice)) > 0; end
       file.close
-      digest.hexdigest
+      digest.digest_algorithm.final.hexstring
     end
 
     # GET /api/storage/libs-release-local/org/acme?properties\[=x[,y]\]
