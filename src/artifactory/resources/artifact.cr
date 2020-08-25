@@ -1,6 +1,5 @@
 require "./base"
-require "digest/sha1"
-require "digest/md5"
+require "openssl"
 
 module Artifactory
   @[JSON::Serializable::Options(emit_nulls: false)]
@@ -193,16 +192,24 @@ module Artifactory
 
       endpoint = File.join("artifactory", url_safe(upload_repo), upload_path) + matrix
 
-      # Include checksums in headers if given.
-      contents = File.read(file.path)
-
-      headers["X-Checksum-Md5"] = md5.nil? ? Digest::MD5.hexdigest(contents) : md5.not_nil!
-      headers["X-Checksum-Sha1"] = sha1.nil? ? Digest::SHA1.hexdigest(contents) : sha1.not_nil!
+      # Include checksums in headers if given. Calculate them if not
+      headers["X-Checksum-Md5"] = md5.nil? ? calc_checksum(file.path, "MD5") : md5.not_nil!
+      headers["X-Checksum-Sha1"] = sha1.nil? ? calc_checksum(file.path, "SHA1") : sha1.not_nil!
+      headers["X-Checksum-Sha256"] = sha256.nil? ? calc_checksum(file.path, "SHA256") : sha256.not_nil!
 
       response = client.put_file(endpoint, file, extra_headers: headers)
       return nil unless response.success?
 
       {{@type}}.from_json(response.body)
+    end
+
+    private def calc_checksum(path, alg)
+      file = File.open(path)
+      digest = OpenSSL::DigestIO.new(file, alg)
+      slice = Bytes.new(256_000)
+      while (digest.read(slice)) > 0; end
+      file.close
+      digest.hexdigest
     end
 
     # GET /api/storage/libs-release-local/org/acme?properties\[=x[,y]\]
