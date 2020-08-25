@@ -4,8 +4,9 @@ require "openssl"
 module Artifactory
   @[JSON::Serializable::Options(emit_nulls: false)]
   class Resource::Artifact < Resource::Base
-    SEARCH_URL      = "artifactory/api/search/artifact"
-    PROP_SEARCH_URL = "artifactory/api/search/prop"
+    SEARCH_URL          = "artifactory/api/search/artifact"
+    PROP_SEARCH_URL     = "artifactory/api/search/prop"
+    CHECKSUM_SEARCH_URL = "artifactory/api/search/checksum"
 
     module ClassMethods
       def search(name : String, *repos,
@@ -21,6 +22,20 @@ module Artifactory
         c = client || Artifactory.client
         props_hash = props.to_h.merge({"repos" => repos.join(",")}).transform_keys { |k| k.to_s }
         resp = c.get(PROP_SEARCH_URL, props_hash)
+        resp["results"].as_a.map do |artifact|
+          from_uri(artifact["uri"].as_s, client: c)
+        end.compact
+      end
+
+      # /api/search/checksum?sha256=9a7fb65f15e00aa2a22c1917d0dafd4374fee8daf0966a4d94cd37a0b9acafb9&repos=libs-release-local
+      def find_by_checksum(alg : String, value : String, *repos)
+        c = client || Artifactory.client
+
+        props_hash = {
+          alg.downcase => value,
+          "repos"      => repos.join(","),
+        }
+        resp = c.get("#{CHECKSUM_SEARCH_URL}", props_hash)
         resp["results"].as_a.map do |artifact|
           from_uri(artifact["uri"].as_s, client: c)
         end.compact
@@ -72,17 +87,30 @@ module Artifactory
       end
     end
 
+    private def file_exists?
+      !local_path.nil? && File.exists?(local_path.not_nil!)
+    end
+
     # The SHA of this artifact.
     def sha1
+      if checksums["sha1"]?.nil? && file_exists?
+        checksums["sha1"] = calc_checksum(local_path.not_nil!, "SHA1")
+      end
       checksums["sha1"]?
     end
 
     def sha256
+      if checksums["sha256"]?.nil? && file_exists?
+        checksums["sha256"] = calc_checksum(local_path.not_nil!, "sha256")
+      end
       checksums["sha256"]?
     end
 
     # The MD5 of this artifact.
     def md5
+      if checksums["md5"]?.nil? && file_exists?
+        checksums["md5"] = calc_checksum(local_path.not_nil!, "md5")
+      end
       checksums["md5"]?
     end
 
