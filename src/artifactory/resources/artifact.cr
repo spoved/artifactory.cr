@@ -28,7 +28,7 @@ module Artifactory
       end
 
       # /api/search/checksum?sha256=9a7fb65f15e00aa2a22c1917d0dafd4374fee8daf0966a4d94cd37a0b9acafb9&repos=libs-release-local
-      def find_by_checksum(alg : String, value : String, *repos, client : Artifactory::Client? = nil)
+      def find_by_checksum(alg : String, value : String, *repos, client : Artifactory::Client? = nil) : Array(Artifactory::Resource::Artifact)
         c = client || Artifactory.client
 
         props_hash = {
@@ -39,6 +39,19 @@ module Artifactory
         resp["results"].as_a.map do |artifact|
           from_uri(artifact["uri"].as_s, client: c)
         end.compact
+      end
+
+
+      def fetch(repo_name : String, remote_path : String, client : Artifactory::Client? = nil) : Artifactory::Resource::Artifact
+        c = client || Artifactory.client
+        resp = c.get(File.join(FETCH_URL_BASE, repo_name, remote_path))
+        from_uri(resp["uri"].as_s, client: c)
+      end
+
+      def fetch?(repo_name : String, remote_path : String, client : Artifactory::Client? = nil) : Artifactory::Resource::Artifact?
+        fetch(repo_name, remote_path, client)
+      rescue
+        nil
       end
     end
 
