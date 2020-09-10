@@ -58,6 +58,7 @@ module Artifactory
 
       property name : String? = nil
       property version : String? = nil
+
       def initialize; end
     end
 
@@ -85,6 +86,7 @@ module Artifactory
       property aggregation_build_status : String? = nil
       @[JSON::Field(key: "affectedIssues")]
       property affected_issues : Array(AffectedIssue) = Array(AffectedIssue).new
+
       def initialize; end
     end
 
@@ -135,6 +137,7 @@ module Artifactory
       property sha1 : String? = nil
       property md5 : String? = nil
       property name : String? = nil
+
       def initialize; end
     end
 
@@ -147,6 +150,7 @@ module Artifactory
       property md5 : String? = nil
       property id : String? = nil
       property scopes : Array(String) = Array(String).new
+
       def initialize; end
     end
   end
