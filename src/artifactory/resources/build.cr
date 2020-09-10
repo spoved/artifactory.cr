@@ -23,23 +23,23 @@ module Artifactory
 
     # MAVEN, GRADLE, ANT, IVY and GENERIC
     @[JSON::Field(key: "type")]
-    property build_type : String?
+    property build_type : String? = nil
     # Build tool information
     @[JSON::Field(key: "buildAgent")]
-    property build_agent : Build::Agent?
+    property build_agent : Build::Agent? = nil
     # CI Server information
-    property agent : Build::Agent?
+    property agent : Build::Agent? = nil
     @[JSON::Field(key: "artifactoryPluginVersion")]
-    property artifactory_plugin_version : String?
+    property artifactory_plugin_version : String? = nil
     @[JSON::Field(key: "durationMillis")]
-    property duration_millis : Int32?
+    property duration_millis : Int32? = nil
     @[JSON::Field(key: "artifactoryPrincipal")]
-    property artifactory_principal : String?
-    property url : String?
+    property artifactory_principal : String? = nil
+    property url : String? = nil
     @[JSON::Field(key: "vcsRevision")]
-    property vcs_revision : String?
+    property vcs_revision : String? = nil
     @[JSON::Field(key: "vcsUrl")]
-    property vcs_url : String?
+    property vcs_url : String? = nil
     @[JSON::Field(key: "licenseControl")]
     property license_control : Build::LicenseControl = Build::LicenseControl.new
     @[JSON::Field(key: "buildRetention")]
@@ -56,30 +56,30 @@ module Artifactory
     class Agent
       include JSON::Serializable
 
-      property name : String?
-      property version : String?
+      property name : String? = nil
+      property version : String? = nil
     end
 
     class BuildRetention
       include JSON::Serializable
 
       @[JSON::Field(key: "deleteBuildArtifacts")]
-      property delete_build_artifacts : Bool?
-      property count : Int32?
+      property delete_build_artifacts : Bool? = nil
+      property count : Int32? = nil
       @[JSON::Field(key: "minimumBuildDate")]
-      property minimum_build_date : Int32?
+      property minimum_build_date : Int32? = nil
       @[JSON::Field(key: "buildNumbersNotToBeDiscarded")]
-      property build_numbers_not_to_be_discarded : Array(JSON::Any?)?
+      property build_numbers_not_to_be_discarded : Array(JSON::Any?)? = nil
     end
 
     class Issues
       include JSON::Serializable
 
-      property tracker : Agent?
+      property tracker : Agent? = nil
       @[JSON::Field(key: "aggregateBuildIssues")]
-      property aggregate_build_issues : Bool?
+      property aggregate_build_issues : Bool? = nil
       @[JSON::Field(key: "aggregationBuildStatus")]
-      property aggregation_build_status : String?
+      property aggregation_build_status : String? = nil
       @[JSON::Field(key: "affectedIssues")]
       property affected_issues : Array(AffectedIssue) = Array(AffectedIssue).new
     end
@@ -87,32 +87,32 @@ module Artifactory
     class AffectedIssue
       include JSON::Serializable
 
-      property key : String?
-      property url : String?
-      property summary : String?
-      property aggregated : Bool?
+      property key : String? = nil
+      property url : String? = nil
+      property summary : String? = nil
+      property aggregated : Bool? = nil
     end
 
     class LicenseControl
       include JSON::Serializable
 
       @[JSON::Field(key: "runChecks")]
-      property run_checks : Bool?
+      property run_checks : Bool? = nil
       @[JSON::Field(key: "includePublishedArtifacts")]
-      property include_published_artifacts : Bool?
+      property include_published_artifacts : Bool? = nil
       @[JSON::Field(key: "autoDiscover")]
-      property auto_discover : Bool?
+      property auto_discover : Bool? = nil
       @[JSON::Field(key: "scopesList")]
-      property scopes_list : String?
+      property scopes_list : String? = nil
       @[JSON::Field(key: "licenseViolationsRecipientsList")]
-      property license_violations_recipients_list : String?
+      property license_violations_recipients_list : String? = nil
     end
 
     class Module
       include JSON::Serializable
 
       property properties : Hash(String, String) = Hash(String, String).new
-      property id : String?
+      property id : String? = nil
       property artifacts : Array(Artifact) = Array(Artifact).new
       property dependencies : Array(Dependency) = Array(Dependency).new
     end
@@ -121,20 +121,20 @@ module Artifactory
       include JSON::Serializable
 
       @[JSON::Field(key: "type")]
-      property artifact_type : String?
-      property sha1 : String?
-      property md5 : String?
-      property name : String?
+      property artifact_type : String? = nil
+      property sha1 : String? = nil
+      property md5 : String? = nil
+      property name : String? = nil
     end
 
     class Dependency
       include JSON::Serializable
 
       @[JSON::Field(key: "type")]
-      property dependency_type : String?
-      property sha1 : String?
-      property md5 : String?
-      property id : String?
+      property dependency_type : String? = nil
+      property sha1 : String? = nil
+      property md5 : String? = nil
+      property id : String? = nil
       property scopes : Array(String) = Array(String).new
     end
   end
