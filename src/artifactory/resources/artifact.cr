@@ -7,6 +7,7 @@ module Artifactory
     SEARCH_URL          = "artifactory/api/search/artifact"
     PROP_SEARCH_URL     = "artifactory/api/search/prop"
     CHECKSUM_SEARCH_URL = "artifactory/api/search/checksum"
+    FETCH_URL_BASE      = "artifactory/storage"
 
     module ClassMethods
       def search(name : String, *repos,
@@ -40,7 +41,6 @@ module Artifactory
           from_uri(artifact["uri"].as_s, client: c)
         end.compact
       end
-
 
       def fetch(repo_name : String, remote_path : String, client : Artifactory::Client? = nil) : Artifactory::Resource::Artifact
         c = client || Artifactory.client
