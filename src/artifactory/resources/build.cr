@@ -58,6 +58,7 @@ module Artifactory
 
       property name : String? = nil
       property version : String? = nil
+      def initialize; end
     end
 
     class BuildRetention
@@ -70,6 +71,8 @@ module Artifactory
       property minimum_build_date : Int32? = nil
       @[JSON::Field(key: "buildNumbersNotToBeDiscarded")]
       property build_numbers_not_to_be_discarded : Array(JSON::Any?)? = nil
+
+      def initialize; end
     end
 
     class Issues
@@ -82,6 +85,7 @@ module Artifactory
       property aggregation_build_status : String? = nil
       @[JSON::Field(key: "affectedIssues")]
       property affected_issues : Array(AffectedIssue) = Array(AffectedIssue).new
+      def initialize; end
     end
 
     class AffectedIssue
@@ -91,6 +95,8 @@ module Artifactory
       property url : String? = nil
       property summary : String? = nil
       property aggregated : Bool? = nil
+
+      def initialize; end
     end
 
     class LicenseControl
@@ -106,6 +112,8 @@ module Artifactory
       property scopes_list : String? = nil
       @[JSON::Field(key: "licenseViolationsRecipientsList")]
       property license_violations_recipients_list : String? = nil
+
+      def initialize; end
     end
 
     class Module
@@ -115,6 +123,8 @@ module Artifactory
       property id : String? = nil
       property artifacts : Array(Artifact) = Array(Artifact).new
       property dependencies : Array(Dependency) = Array(Dependency).new
+
+      def initialize; end
     end
 
     class Artifact
@@ -125,6 +135,7 @@ module Artifactory
       property sha1 : String? = nil
       property md5 : String? = nil
       property name : String? = nil
+      def initialize; end
     end
 
     class Dependency
@@ -136,6 +147,7 @@ module Artifactory
       property md5 : String? = nil
       property id : String? = nil
       property scopes : Array(String) = Array(String).new
+      def initialize; end
     end
   end
 end
