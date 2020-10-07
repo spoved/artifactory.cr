@@ -280,7 +280,25 @@ module Artifactory
     end
 
     def update_properties(new_properties : Hash(String, String) = Hash(String, String).new, **props)
-      matrix = self.class.to_matrix_properties(self.properties.merge(props.to_h.merge(new_properties)))
+      matrix = self.class.to_matrix_properties(self.properties.merge(new_properties.merge(props.to_h)))
+      endpoint = File.join("artifactory/api/storage", relative_path) + "?properties=" + matrix.lstrip(";").chomp('?')
+      client.put(endpoint)
+      @properties = fetch_properties
+    end
+
+    def replace_properties(new_properties : Hash(String, String) = Hash(String, String).new, **props)
+      matrix = self.class.to_matrix_properties(new_properties.merge(props.to_h))
+      endpoint = File.join("artifactory/api/storage", relative_path) + "?properties=" + matrix.lstrip(";").chomp('?')
+      client.put(endpoint)
+      @properties = fetch_properties
+    end
+
+    def del_properties(*prop_names)
+      new_props = properties.dup
+      prop_names.each do |k|
+        new_props.delete(k.to_s)
+      end
+      matrix = self.class.to_matrix_properties(new_props)
       endpoint = File.join("artifactory/api/storage", relative_path) + "?properties=" + matrix.lstrip(";").chomp('?')
       client.put(endpoint)
       @properties = fetch_properties
