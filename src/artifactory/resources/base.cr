@@ -71,17 +71,17 @@ module Artifactory
       # @see http://bit.ly/1qeVYQl
       #
       def to_matrix_properties(hash) : String
-        properties = hash.map do |k, v|
+        matrix = hash.map do |k, v|
           key = form_safe(k.to_s)
           value = form_safe(v.to_s)
 
           "#{key}=#{value}"
         end
 
-        if properties.empty?
+        if matrix.empty?
           ""
         else
-          ";#{properties.join(";")}"
+          ";#{matrix.join(";")};"
         end
       end
     end

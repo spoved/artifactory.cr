@@ -136,7 +136,7 @@ module Artifactory
     # @return [String]
     #
     def relative_path
-      @relative_path ||= uri.not_nil!.split("api/storage", 2).last
+      @relative_path ||= uri.not_nil!.split("api/storage", 2).last.split("artifactory", 2).last
     end
 
     # Delete this artifact from repository, suppressing any +ResourceNotFound+
@@ -237,7 +237,6 @@ module Artifactory
       headers["X-Checksum-Md5"] = md5.nil? ? calc_checksum(file.path, "MD5") : md5.not_nil!
       headers["X-Checksum-Sha1"] = sha1.nil? ? calc_checksum(file.path, "SHA1") : sha1.not_nil!
       headers["X-Checksum-Sha256"] = sha256.nil? ? calc_checksum(file.path, "SHA256") : sha256.not_nil!
-
       response = client.put_file(endpoint, file, extra_headers: headers)
       return nil unless response.success?
 
@@ -278,6 +277,13 @@ module Artifactory
     def get_contents
       endpoint = download_uri.not_nil!.split("artifactory", 2).last
       client.get_raw(path: "artifactory" + endpoint)
+    end
+
+    def update_properties(new_properties : Hash(String, String) = Hash(String, String).new, **props)
+      matrix = self.class.to_matrix_properties(self.properties.merge(props.to_h.merge(new_properties)))
+      endpoint = File.join("artifactory/api/storage", relative_path) + "?properties=" + matrix.lstrip(";").chomp('?')
+      client.put(endpoint)
+      @properties = fetch_properties
     end
   end
 end
