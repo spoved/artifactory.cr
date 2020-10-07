@@ -294,13 +294,8 @@ module Artifactory
     end
 
     def del_properties(*prop_names)
-      new_props = properties.dup
-      prop_names.each do |k|
-        new_props.delete(k.to_s)
-      end
-      matrix = self.class.to_matrix_properties(new_props)
-      endpoint = File.join("artifactory/api/storage", relative_path) + "?properties=" + matrix.lstrip(";").chomp('?')
-      client.put(endpoint)
+      endpoint = File.join("artifactory/api/storage", relative_path) + "?properties=" + prop_names.map(&.to_s).join(',')
+      client.delete(endpoint)
       @properties = fetch_properties
     end
   end
