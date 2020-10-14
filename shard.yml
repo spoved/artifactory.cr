@@ -19,3 +19,4 @@ development_dependencies:
     version: ~> 0.10.0
   dotenv:
     github: gdotdesign/cr-dotenv
+    branch: master
