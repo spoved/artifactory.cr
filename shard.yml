@@ -11,6 +11,7 @@ license: MIT
 dependencies:
   spoved:
     github: spoved/spoved.cr
+    branch: master
 development_dependencies:
   vcr:
     github: spoved/vcr.cr
@@ -19,4 +20,3 @@ development_dependencies:
     version: ~> 0.10.0
   dotenv:
     github: gdotdesign/cr-dotenv
-    branch: master
