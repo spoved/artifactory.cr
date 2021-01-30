@@ -1,5 +1,5 @@
 require "./base"
-require "openssl"
+require "digest"
 
 module Artifactory
   @[JSON::Serializable::Options(emit_nulls: false)]
@@ -243,9 +243,25 @@ module Artifactory
       {{@type}}.from_json(response.body)
     end
 
+    private def digest(alg : String) : OpenSSL::Digest
+      case alg.downcase
+      when "md5"
+        Digest::MD5.new
+      when "sha1"
+        Digest::SHA1.new
+      when "sha256"
+        Digest::SHA256.new
+      when "sha512"
+        Digest::SHA512.new
+      else
+        raise "Unsupported checksum"
+      end
+    end
+
     private def calc_checksum(path, alg)
       file = File.open(path)
-      digest = OpenSSL::DigestIO.new(file, alg)
+
+      digest = IO::Digest.new(file, digest(alg))
       slice = Bytes.new(256_000)
       while (digest.read(slice)) > 0; end
       file.close

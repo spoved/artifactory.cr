@@ -4,19 +4,19 @@ version: 0.1.8
 authors:
   - Holden Omans <holden.omans@gmail.com>
 
-crystal: 0.35.1
+crystal: 0.36.0
 
 license: MIT
 
 dependencies:
   spoved:
     github: spoved/spoved.cr
-    branch: master
+    version: ~> 0.4.1
 development_dependencies:
   vcr:
     github: spoved/vcr.cr
   ameba:
     github: veelenga/ameba
-    version: ~> 0.10.0
+    version: ~> 0.13.0
   dotenv:
     github: gdotdesign/cr-dotenv
