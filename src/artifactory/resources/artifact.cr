@@ -298,9 +298,9 @@ module Artifactory
     end
 
     def update_properties(new_properties : Hash(String, String) = Hash(String, String).new, **props)
-      matrix = self.class.to_matrix_properties(self.properties.merge(new_properties.merge(props.to_h)))
-      endpoint = File.join("artifactory/api/storage", relative_path)
-      resp = client.put(endpoint, params: "properties=" + matrix.lstrip(";").rstrip('?'))
+      endpoint = File.join("artifactory/api/metadata", relative_path)
+      resp =  client.patch(endpoint, { props: self.properties.merge(new_properties.merge(props.to_h)) }.to_json )
+
       if resp["errors"]?
         logger.error { resp.to_s }
         raise "failed to update properties"
@@ -310,9 +310,9 @@ module Artifactory
     end
 
     def replace_properties(new_properties : Hash(String, String) = Hash(String, String).new, **props)
-      matrix = self.class.to_matrix_properties(new_properties.merge(props.to_h))
-      endpoint = File.join("artifactory/api/storage", relative_path)
-      resp = client.put(endpoint, params: "properties=" + matrix.lstrip(";").rstrip('?'))
+      endpoint = File.join("artifactory/api/metadata", relative_path)
+      resp =  client.patch(endpoint, { props: new_properties.merge(props.to_h) }.to_json )
+
       if resp["errors"]?
         logger.error { resp.to_s }
         raise "failed to replace properties"
