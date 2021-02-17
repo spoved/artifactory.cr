@@ -312,7 +312,6 @@ module Artifactory
     def replace_properties(new_properties : Hash(String, String) = Hash(String, String).new, **props)
       matrix = self.class.to_matrix_properties(new_properties.merge(props.to_h))
       endpoint = File.join("artifactory/api/storage", relative_path)
-      puts endpoint
       resp = client.put(endpoint, params: "properties=" + matrix.lstrip(";").rstrip('?'))
       if resp["errors"]?
         logger.error { resp.to_s }
