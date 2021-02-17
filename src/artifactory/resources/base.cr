@@ -73,8 +73,8 @@ module Artifactory
       def to_matrix_properties(hash) : String
         matrix = hash.map do |k, v|
           key = form_safe(k.to_s)
-          value = form_safe(v.to_s)
-          if value =~ /(\%[257]C|\%3D)/
+          value = form_safe(v.to_s).gsub(',', "%2C")
+          if value =~ /(?!%5C)(\%[257]C|\%3D)/
             value = value.gsub($1, "%5C#{$1}")
           end
           "#{key}=#{value}"

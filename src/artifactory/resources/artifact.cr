@@ -4,6 +4,8 @@ require "digest"
 module Artifactory
   @[JSON::Serializable::Options(emit_nulls: false)]
   class Resource::Artifact < Resource::Base
+    spoved_logger
+
     SEARCH_URL          = "artifactory/api/search/artifact"
     PROP_SEARCH_URL     = "artifactory/api/search/prop"
     CHECKSUM_SEARCH_URL = "artifactory/api/search/checksum"
@@ -297,22 +299,38 @@ module Artifactory
 
     def update_properties(new_properties : Hash(String, String) = Hash(String, String).new, **props)
       matrix = self.class.to_matrix_properties(self.properties.merge(new_properties.merge(props.to_h)))
-      endpoint = File.join("artifactory/api/storage", relative_path) + "?properties=" + matrix.lstrip(";").chomp('?')
-      client.put(endpoint)
+      endpoint = File.join("artifactory/api/storage", relative_path)
+      resp = client.put(endpoint, params: "properties=" + matrix.lstrip(";").rstrip('?'))
+      if resp["errors"]?
+        logger.error { resp.to_s }
+        raise "failed to update properties"
+      end
       @properties = fetch_properties
+      resp
     end
 
     def replace_properties(new_properties : Hash(String, String) = Hash(String, String).new, **props)
       matrix = self.class.to_matrix_properties(new_properties.merge(props.to_h))
-      endpoint = File.join("artifactory/api/storage", relative_path) + "?properties=" + matrix.lstrip(";").chomp('?')
-      client.put(endpoint)
+      endpoint = File.join("artifactory/api/storage", relative_path)
+      puts endpoint
+      resp = client.put(endpoint, params: "properties=" + matrix.lstrip(";").rstrip('?'))
+      if resp["errors"]?
+        logger.error { resp.to_s }
+        raise "failed to replace properties"
+      end
       @properties = fetch_properties
+      resp
     end
 
     def del_properties(*prop_names)
-      endpoint = File.join("artifactory/api/storage", relative_path) + "?properties=" + prop_names.map(&.to_s).join(',')
-      client.delete(endpoint)
+      endpoint = File.join("artifactory/api/storage", relative_path)
+      resp = client.delete(endpoint, params: "properties=" + prop_names.map(&.to_s).join(',').lstrip(";").rstrip('?'))
+      if resp["errors"]?
+        logger.error { resp.to_s }
+        raise "failed to delete properties"
+      end
       @properties = fetch_properties
+      resp
     end
   end
 end
